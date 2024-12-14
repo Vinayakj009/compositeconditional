@@ -3,7 +3,6 @@ This repos implements the Composite Conditional pattern, and provides an example
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Installation](#installation)
 - [Example usage](#Usage)
 - [License](#license)
 
