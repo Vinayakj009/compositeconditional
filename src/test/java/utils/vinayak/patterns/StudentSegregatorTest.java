@@ -16,7 +16,7 @@ public class StudentSegregatorTest {
     @Builder
     private static class TestCase {
         private final Getter<String, Integer> studentScore;
-        private final ConditionalComposite<String, String, Integer> gradingOptions;
+        private final OptionsSelector<String, String, Integer> gradingOptions;
         private final String expectedGrade;
     }
 
@@ -24,7 +24,7 @@ public class StudentSegregatorTest {
     @MethodSource("getTestCaseNames")
     public void testCompositeConditionals(String testName) {
         TestCase testCase = getTestCases().get(testName);
-        String actualGrade = testCase.gradingOptions.getFirstSatisfiableOption(testCase.studentScore);
+        String actualGrade = testCase.gradingOptions.selectFirstViableOption(testCase.studentScore);
         assertEquals(testCase.expectedGrade, actualGrade);
     }
 
@@ -34,7 +34,7 @@ public class StudentSegregatorTest {
 
     private static Map<String, TestCase> getTestCases() {
 
-        ConditionalComposite<String, String, Integer> gradingOptions = getGradingOptons();
+        OptionsSelector<String, String, Integer> gradingOptions = getGradingOptons();
         Map<String, TestCase> testCases = new HashMap<>();
         testCases.put("1. topper", TestCase.builder()
                 .studentScore((subject) -> {
@@ -106,8 +106,8 @@ public class StudentSegregatorTest {
         return testCases;
     }
 
-    private static ConditionalComposite<String, String, Integer> getGradingOptons() {
-        ConditionalComposite<String, String, Integer> gradingOptions = new ConditionalComposite<>();
+    private static OptionsSelector<String, String, Integer> getGradingOptons() {
+        OptionsSelector<String, String, Integer> gradingOptions = new OptionsSelector<>();
         Operation<Integer> equal = (a, b) -> a.equals(b);
         Operation<Integer> greaterThan = (a, b) -> a > b;
         gradingOptions.put("topper", SatisfyAll.<String, Integer>builder()

@@ -8,12 +8,12 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
-public class CompositeConditionalsTests {
+public class OptionsSelectorTest {
     @Test
     public void testGetSatisfiableOptionsWithMaintainingInputOrder() {
         Random random = new Random();
         for (int i = 0; i < 100; i++) {
-            ConditionalComposite<Integer, Object, Object> conditionalComposite = new ConditionalComposite<>();
+            OptionsSelector<Integer, Object, Object> conditionalComposite = new OptionsSelector<>();
             List<Integer> expectedOutput = new ArrayList<>();
             for (int j = 0; j < 50000; j++) {
                 int randomInt = random.nextInt(1000000);
@@ -26,7 +26,7 @@ public class CompositeConditionalsTests {
                 }
                 conditionalComposite.put(randomInt, data -> expectedInOutput);
             }
-            List<Integer> actualOutput = conditionalComposite.getSatisfiableOptions(null);
+            List<Integer> actualOutput = conditionalComposite.getSelectableOptions(null);
             assertEquals(expectedOutput, actualOutput);
         }
     }
@@ -35,7 +35,7 @@ public class CompositeConditionalsTests {
     public void testGetFirstSatisfiableOption() {
         Random random = new Random();
         for (int i = 0; i < 100; i++) {
-            ConditionalComposite<Integer, Object, Object> conditionalComposite = new ConditionalComposite<>();
+            OptionsSelector<Integer, Object, Object> conditionalComposite = new OptionsSelector<>();
             Integer expectedOutput = null;
             for (int j = 0; j < 50000; j++) {
                 int randomInt = random.nextInt(1000000);
@@ -48,7 +48,7 @@ public class CompositeConditionalsTests {
                 }
                 conditionalComposite.put(randomInt, data -> expectedInOutput);
             }
-            Integer actualOutput = conditionalComposite.getFirstSatisfiableOption(null);
+            Integer actualOutput = conditionalComposite.selectFirstViableOption(null);
             assertEquals(expectedOutput, actualOutput);
         }
     }
