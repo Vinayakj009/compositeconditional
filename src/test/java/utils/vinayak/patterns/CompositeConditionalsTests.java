@@ -8,7 +8,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-public class ConditionalCompositeTest {
+public class CompositeConditionalsTests {
     @Test
     public void testGetSatisfiableOptionsWithMaintainingInputOrder() {
         Random random = new Random();
