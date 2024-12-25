@@ -1,4 +1,4 @@
-package utils.vinayak.patterns;
+package utils.vinayak.patterns.CompositeConditional.Interfaces;
 
 @FunctionalInterface
 public interface Operation<V> {

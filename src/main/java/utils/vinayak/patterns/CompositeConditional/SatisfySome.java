@@ -1,8 +1,10 @@
-package utils.vinayak.patterns;
+package utils.vinayak.patterns.CompositeConditional;
 
 import java.util.List;
 
 import lombok.Builder;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
 
 @Builder
 public class SatisfySome<K, V> implements Condition<K, V> {
