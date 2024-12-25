@@ -1,27 +1,22 @@
 package utils.vinayak.patterns;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import lombok.Builder;
 
 public class StudentSegregatorTest {
-    @Builder
-    private static class GradingOption {
-        private final String grade;
-        private final Condition<String, Integer> condition;
-    }
 
     @Builder
     private static class TestCase {
         private final Getter<String, Integer> studentScore;
-        private final List<GradingOption> gradingOptions;
+        private final ConditionalComposite<String, String, Integer> gradingOptions;
         private final String expectedGrade;
     }
 
@@ -29,13 +24,8 @@ public class StudentSegregatorTest {
     @MethodSource("getTestCaseNames")
     public void testCompositeConditionals(String testName) {
         TestCase testCase = getTestCases().get(testName);
-        for (GradingOption gradingOption : testCase.gradingOptions) {
-            if (gradingOption.condition.satisfies(testCase.studentScore)) {
-                assertEquals(testCase.expectedGrade, gradingOption.grade);
-                return;
-            }
-        }
-        fail(testName);
+        String actualGrade = testCase.gradingOptions.getFirstSatisfiableOption(testCase.studentScore);
+        assertEquals(testCase.expectedGrade, actualGrade);
     }
 
     private static List<String> getTestCaseNames() {
@@ -44,7 +34,7 @@ public class StudentSegregatorTest {
 
     private static Map<String, TestCase> getTestCases() {
 
-        List<GradingOption> gradingOptions = getGradingOptons();
+        ConditionalComposite<String, String, Integer> gradingOptions = getGradingOptons();
         Map<String, TestCase> testCases = new HashMap<>();
         testCases.put("1. topper", TestCase.builder()
                 .studentScore((subject) -> {
@@ -116,13 +106,39 @@ public class StudentSegregatorTest {
         return testCases;
     }
 
-    private static List<GradingOption> getGradingOptons() {
+    private static ConditionalComposite<String, String, Integer> getGradingOptons() {
+        ConditionalComposite<String, String, Integer> gradingOptions = new ConditionalComposite<>();
         Operation<Integer> equal = (a, b) -> a.equals(b);
         Operation<Integer> greaterThan = (a, b) -> a > b;
-        return List.of(
-                GradingOption.builder()
-                        .grade("topper")
-                        .condition(SatisfyAll.<String, Integer>builder()
+        gradingOptions.put("topper", SatisfyAll.<String, Integer>builder()
+                .conditions(List.of(
+                        BaseCondition.<String, Integer>builder()
+                                .compare("science")
+                                .with(equal)
+                                .to(100)
+                                .build(),
+                        BaseCondition.<String, Integer>builder()
+                                .compare("maths")
+                                .with(equal)
+                                .to(100)
+                                .build()))
+                .build());
+
+        gradingOptions.put("A++", SatisfyAny.<String, Integer>builder()
+                .conditions(List.of(SatisfyAll.<String, Integer>builder()
+                        .conditions(List.of(
+                                BaseCondition.<String, Integer>builder()
+                                        .compare("science")
+                                        .with(greaterThan)
+                                        .to(95)
+                                        .build(),
+                                BaseCondition.<String, Integer>builder()
+                                        .compare("maths")
+                                        .with(equal)
+                                        .to(100)
+                                        .build()))
+                        .build(),
+                        SatisfyAll.<String, Integer>builder()
                                 .conditions(List.of(
                                         BaseCondition.<String, Integer>builder()
                                                 .compare("science")
@@ -131,86 +147,52 @@ public class StudentSegregatorTest {
                                                 .build(),
                                         BaseCondition.<String, Integer>builder()
                                                 .compare("maths")
+                                                .with(greaterThan)
+                                                .to(95)
+                                                .build()))
+                                .build()))
+                .build());
+        gradingOptions.put("A+", SatisfyAny.<String, Integer>builder()
+                .conditions(List.of(SatisfyAll.<String, Integer>builder()
+                        .conditions(List.of(
+                                BaseCondition.<String, Integer>builder()
+                                        .compare("science")
+                                        .with(greaterThan)
+                                        .to(90)
+                                        .build(),
+                                BaseCondition.<String, Integer>builder()
+                                        .compare("maths")
+                                        .with(equal)
+                                        .to(100)
+                                        .build()))
+                        .build(),
+                        SatisfyAll.<String, Integer>builder()
+                                .conditions(List.of(
+                                        BaseCondition.<String, Integer>builder()
+                                                .compare("science")
                                                 .with(equal)
                                                 .to(100)
-                                                .build()))
-                                .build())
-                        .build(),
-
-                GradingOption.builder()
-                        .grade("A++")
-                        .condition(SatisfyAny.<String, Integer>builder()
-                                .conditions(List.of(SatisfyAll.<String, Integer>builder()
-                                        .conditions(List.of(
-                                                BaseCondition.<String, Integer>builder()
-                                                        .compare("science")
-                                                        .with(greaterThan)
-                                                        .to(95)
-                                                        .build(),
-                                                BaseCondition.<String, Integer>builder()
-                                                        .compare("maths")
-                                                        .with(equal)
-                                                        .to(100)
-                                                        .build()))
-                                        .build(),
-                                        SatisfyAll.<String, Integer>builder()
-                                                .conditions(List.of(
-                                                        BaseCondition.<String, Integer>builder()
-                                                                .compare("science")
-                                                                .with(equal)
-                                                                .to(100)
-                                                                .build(),
-                                                        BaseCondition.<String, Integer>builder()
-                                                                .compare("maths")
-                                                                .with(greaterThan)
-                                                                .to(95)
-                                                                .build()))
-                                                .build()))
-                                .build())
-                        .build(),
-                GradingOption.builder()
-                        .grade("A+")
-                        .condition(SatisfyAny.<String, Integer>builder()
-                                .conditions(List.of(SatisfyAll.<String, Integer>builder()
-                                        .conditions(List.of(
-                                                BaseCondition.<String, Integer>builder()
-                                                        .compare("science")
-                                                        .with(greaterThan)
-                                                        .to(90)
-                                                        .build(),
-                                                BaseCondition.<String, Integer>builder()
-                                                        .compare("maths")
-                                                        .with(equal)
-                                                        .to(100)
-                                                        .build()))
-                                        .build(),
-                                        SatisfyAll.<String, Integer>builder()
-                                                .conditions(List.of(
-                                                        BaseCondition.<String, Integer>builder()
-                                                                .compare("science")
-                                                                .with(equal)
-                                                                .to(100)
-                                                                .build(),
-                                                        BaseCondition.<String, Integer>builder()
-                                                                .compare("maths")
-                                                                .with(greaterThan)
-                                                                .to(90)
-                                                                .build()))
                                                 .build(),
-                                        SatisfyAll.<String, Integer>builder()
-                                                .conditions(List.of(
-                                                        BaseCondition.<String, Integer>builder()
-                                                                .compare("science")
-                                                                .with(greaterThan)
-                                                                .to(95)
-                                                                .build(),
-                                                        BaseCondition.<String, Integer>builder()
-                                                                .compare("maths")
-                                                                .with(greaterThan)
-                                                                .to(95)
-                                                                .build()))
+                                        BaseCondition.<String, Integer>builder()
+                                                .compare("maths")
+                                                .with(greaterThan)
+                                                .to(90)
                                                 .build()))
-                                .build())
-                        .build());
+                                .build(),
+                        SatisfyAll.<String, Integer>builder()
+                                .conditions(List.of(
+                                        BaseCondition.<String, Integer>builder()
+                                                .compare("science")
+                                                .with(greaterThan)
+                                                .to(95)
+                                                .build(),
+                                        BaseCondition.<String, Integer>builder()
+                                                .compare("maths")
+                                                .with(greaterThan)
+                                                .to(95)
+                                                .build()))
+                                .build()))
+                .build());
+        return gradingOptions;
     }
 }
