@@ -1,4 +1,4 @@
-package utils.vinayak.patterns;
+package utils.vinayak.patterns.CompositeConditional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,6 +10,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import lombok.Builder;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Operation;
 
 public class StudentSegregatorTest {
 

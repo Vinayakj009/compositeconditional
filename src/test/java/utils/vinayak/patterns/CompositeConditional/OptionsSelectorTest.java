@@ -1,4 +1,4 @@
-package utils.vinayak.patterns;
+package utils.vinayak.patterns.CompositeConditional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
