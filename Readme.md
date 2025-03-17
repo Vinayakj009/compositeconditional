@@ -45,6 +45,8 @@ But this kind of code creates a hard codes the conditions for assigning a topic 
 
 The composite conditional solves this problem by separating the options/conditions list from the code which actually does the comparision.
 
+This update is being tested for pull request
+
 The above function has been implemented using the composite conditional pattern in [StudentSegregatorTest.java](https://github.com/Vinayakj009/compositeconditional/blob/master/src/test/java/utils/vinayak/patterns/StudentSegregatorTest.java) test case.
 
 
