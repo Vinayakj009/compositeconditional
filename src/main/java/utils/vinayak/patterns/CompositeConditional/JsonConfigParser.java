@@ -21,10 +21,10 @@ public class JsonConfigParser<K, V> implements ConfigParser<K, V> {
         RawConfig rawConfig = objectMapper.convertValue(condition, RawConfig.class);
         Class<?> clazz = classMap.get(rawConfig.getClassName());
         if (clazz == null) {
-            throw new RuntimeException("Class not found");
+            throw new RuntimeException(Constants.EXCEPTION_CLASS_NOT_FOUND);
         }
         if (!CompositeConfig.class.isAssignableFrom(clazz)) {
-            throw new RuntimeException("Class does not implement CompositeConfig interface");
+            throw new RuntimeException(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
         }
         Condition<K, V> output = (Condition<K, V>) objectMapper.convertValue(rawConfig.getData(), clazz);
         if (CompositeConfig.class.isAssignableFrom(output.getClass())) {
@@ -39,14 +39,14 @@ public class JsonConfigParser<K, V> implements ConfigParser<K, V> {
         try {
             rawConfig = objectMapper.readValue(condition, RawConfig.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error parsing json");
+            throw new RuntimeException(Constants.EXCEPTION_ERROR_PARSING_JSON);
         }
         Class<?> clazz = classMap.get(rawConfig.getClassName());
         if (clazz == null) {
-            throw new RuntimeException("Class not found");
+            throw new RuntimeException(Constants.EXCEPTION_CLASS_NOT_FOUND);
         }
         if (!Condition.class.isAssignableFrom(clazz)) {
-            throw new RuntimeException("Class does not implement CompositeConfig interface");
+            throw new RuntimeException(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
         }
         Condition<K, V> output = (Condition<K, V>) objectMapper.convertValue(rawConfig.getData(), clazz);
         if (CompositeConfig.class.isAssignableFrom(output.getClass())) {
@@ -64,7 +64,7 @@ public class JsonConfigParser<K, V> implements ConfigParser<K, V> {
         RawConfig rawConfig = objectMapper.convertValue(operation, RawConfig.class);
         Class<?> clazz = classMap.get(rawConfig.getClassName());
         if (!Operation.class.isAssignableFrom(clazz)) {
-            throw new RuntimeException("Class does not implement CompositeConfig interface");
+            throw new RuntimeException(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
         }
         Operation<V> output = (Operation<V>) objectMapper.convertValue(rawConfig.getData(), clazz);
         if (CompositeConfig.class.isAssignableFrom(output.getClass())) {
