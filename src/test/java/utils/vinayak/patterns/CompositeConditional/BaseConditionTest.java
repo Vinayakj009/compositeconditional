@@ -2,8 +2,6 @@ package utils.vinayak.patterns.CompositeConditional;
 
 import org.junit.jupiter.api.Test;
 
-import utils.vinayak.patterns.CompositeConditional.BaseCondition;
-
 public class BaseConditionTest {
 
     @Test
