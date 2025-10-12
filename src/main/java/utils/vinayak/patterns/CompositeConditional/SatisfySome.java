@@ -30,11 +30,7 @@ public class SatisfySome<K, V> implements Condition<K, V>, CompositeConfig<K, V>
 
     @Override
     public void parseConfig(ConfigParser<K, V> parser, Map<String, Object> data) {
-        List<Map<String, Object>> conditions = (List<Map<String, Object>>) data.get(Constants.CONDITION);
         this.conditions = new ArrayList<>();
-        this.satisfyMinimum = (int) data.get(Constants.SATISFY_MINIMUM);
-        for (Map<String, Object> condition : conditions) {
-            this.conditions.add(parser.parseCondition(condition));
-        }
+        parser.parseConditions(data, this.conditions::add);
     }
 }

@@ -29,7 +29,6 @@ public class BaseCondition<K, V> implements Condition<K, V>, CompositeConfig<K, 
 
     @Override
     public void parseConfig(ConfigParser<K, V> parser, Map<String, Object> data) {
-        Map<String, Object> operation = (Map<String, Object>) data.get(Constants.OPERATION);
-        this.with = parser.parseOperation(operation);
+        this.with = parser.parseOperation(data);
     }
 }

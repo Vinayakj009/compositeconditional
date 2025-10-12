@@ -1,6 +1,7 @@
 package utils.vinayak.patterns.CompositeConditional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,7 +18,14 @@ public class JsonConfigParser<K, V> implements ConfigParser<K, V> {
     private static ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public Condition<K, V> parseCondition(Object condition) {
+    public void parseConditions(Map<String, Object> data, java.util.function.Consumer<Condition<K, V>> consumer) {
+        List<Map<String, Object>> conditions = (List<Map<String, Object>>) data.get(Constants.CONDITION);
+        for (Map<String, Object> condition : conditions) {
+            consumer.accept(parseCondition(condition));
+        }
+    }
+
+    private Condition<K, V> parseCondition(Object condition) {
         RawConfig rawConfig = objectMapper.convertValue(condition, RawConfig.class);
         Class<?> clazz = classMap.get(rawConfig.getClassName());
         if (clazz == null) {
@@ -60,7 +68,8 @@ public class JsonConfigParser<K, V> implements ConfigParser<K, V> {
         classMap.put(className, clazz);
     }
 
-    public Operation<V> parseOperation(Object operation) {
+    public Operation<V> parseOperation(Map<String, Object> data) {
+        Map<String, Object> operation = (Map<String, Object>) data.get(Constants.OPERATION);
         RawConfig rawConfig = objectMapper.convertValue(operation, RawConfig.class);
         Class<?> clazz = classMap.get(rawConfig.getClassName());
         if (!Operation.class.isAssignableFrom(clazz)) {
