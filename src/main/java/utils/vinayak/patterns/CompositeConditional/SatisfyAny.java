@@ -7,7 +7,7 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import utils.vinayak.patterns.CompositeConditional.Interfaces.CompositeConfig;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Configurable;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.ConfigParser;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
@@ -15,7 +15,7 @@ import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SatisfyAny<K, V> implements Condition<K, V>, CompositeConfig<K, V> {
+public class SatisfyAny<K, V> implements Condition<K, V>, Configurable<K, V> {
     private List<Condition<K, V>> conditions;
 
     @Override
@@ -29,10 +29,7 @@ public class SatisfyAny<K, V> implements Condition<K, V>, CompositeConfig<K, V> 
 
     @Override
     public void parseConfig(ConfigParser<K, V> parser, Map<String, Object> data) {
-        List<Map<String, Object>> conditions = (List<Map<String, Object>>) data.get(Constants.CONDITION);
         this.conditions = new ArrayList<>();
-        for (Map<String, Object> condition : conditions) {
-            this.conditions.add(parser.parseCondition(condition));
-        }
+        parser.parseConditions(data, this.conditions::add);
     }
 }

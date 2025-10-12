@@ -1,10 +1,19 @@
-package utils.vinayak.patterns.CompositeConditional;
+package utils.vinayak.patterns.CompositeConditional.JsonConfigParser;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import lombok.NoArgsConstructor;
+import utils.vinayak.patterns.CompositeConditional.BaseCondition;
+import utils.vinayak.patterns.CompositeConditional.Constants;
+import utils.vinayak.patterns.CompositeConditional.SatisfyAll;
+import utils.vinayak.patterns.CompositeConditional.SatisfyAny;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Operation;
+import utils.vinayak.patterns.CompositeConditional.JsonConfigParaser.JsonConfigParser;
 
 public class JsonConfigParserTest {
 
@@ -37,6 +46,15 @@ public class JsonConfigParserTest {
             }
             return "";
         });
+    }
+
+    @Test
+    public void parseBaseConditonThroughStringBadJson() {
+        String config = "{.\"className\": \"bc\",\"data\": {\"compare\": \"subject\",\"to\": \"science\",\"operation\": {\"className\": \"eq\", \"data\":{}}}}";
+        JsonConfigParser<String, String> parser = new JsonConfigParser<>();
+        parser.addClass("bc", BaseCondition.class);
+        parser.addClass("eq", equalOperation.class);
+        assertThrows(RuntimeException.class, () -> parser.parseCondition(config));
     }
 
     @Test
@@ -123,6 +141,82 @@ public class JsonConfigParserTest {
             }
             return null;
         });
+    }
+
+    @Test
+    public void parseConditionsMultipleBaseConditions() {
+        JsonConfigParser<String, String> parser = new JsonConfigParser<>();
+        parser.addClass("bc", BaseCondition.class);
+        parser.addClass("eq", equalOperation.class);
+
+        Map<String, Object> data = new java.util.HashMap<>();
+        data.put("conditions", java.util.Arrays.asList(
+                java.util.Map.of("className", "bc", "data",
+                        java.util.Map.of("compare", "subject", "to", "science",
+                                "operation", java.util.Map.of("className", "eq", "data", java.util.Map.of()))),
+                java.util.Map.of("className", "bc", "data",
+                        java.util.Map.of("compare", "grade", "to", "A",
+                                "operation", java.util.Map.of("className", "eq", "data", java.util.Map.of())))));
+
+        java.util.List<Condition<String, String>> conditions = new java.util.ArrayList<>();
+        parser.parseConditions(data, conditions::add);
+
+        assert conditions.size() == 2;
+        assert conditions.get(0).satisfies(key -> key.equals("subject") ? "science" : "");
+        assert conditions.get(1).satisfies(key -> key.equals("grade") ? "A" : "");
+    }
+
+    @Test
+    public void testParseConditionClassNotFoundException() {
+        String config = "{\"className\": \"unknownClass\",\"data\": {\"compare\": \"subject\",\"to\": \"science\",\"operation\": {\"className\": \"eq\", \"data\":{}}}}";
+        JsonConfigParser<String, String> parser = new JsonConfigParser<>();
+        parser.addClass("bc", BaseCondition.class);
+        parser.addClass("eq", equalOperation.class);
+        try {
+            parser.parseCondition(config);
+            assert false;
+        } catch (RuntimeException e) {
+            assert e.getMessage().equals(Constants.EXCEPTION_CLASS_NOT_FOUND);
+        }
+        Map<String, Object> objectconfig = new java.util.HashMap<>();
+        objectconfig.put("className", "unknownClass");
+        objectconfig.put("data", java.util.Map.of("compare", "subject", "to", "science",
+                "operation", java.util.Map.of("className", "eq", "data", java.util.Map.of())));
+        Map<String, Object> objectconfigs = new java.util.HashMap<>();
+        objectconfigs.put("conditions", java.util.Arrays.asList(objectconfig));
+        try {
+            parser.parseConditions(objectconfigs, (condition) -> {
+            });
+            assert false;
+        } catch (RuntimeException e) {
+            assert e.getMessage().equals(Constants.EXCEPTION_CLASS_NOT_FOUND);
+        }
+    }
+    @Test
+    public void testParseConditionClassDoesNotImplementConfigParserException() {
+        String config = "{\"className\": \"eq\",\"data\": {\"compare\": \"subject\",\"to\": \"science\",\"operation\": {\"className\": \"eq\", \"data\":{}}}}";
+        JsonConfigParser<String, String> parser = new JsonConfigParser<>();
+        parser.addClass("bc", BaseCondition.class);
+        parser.addClass("eq", equalOperation.class);
+        try {
+            parser.parseCondition(config);
+            assert false;
+        } catch (RuntimeException e) {
+            assert e.getMessage().equals(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
+        }
+        Map<String, Object> objectconfig = new java.util.HashMap<>();
+        objectconfig.put("className", "eq");
+        objectconfig.put("data", java.util.Map.of("compare", "subject", "to", "science",
+                "operation", java.util.Map.of("className", "eq", "data", java.util.Map.of())));
+        Map<String, Object> objectconfigs = new java.util.HashMap<>();
+        objectconfigs.put("conditions", java.util.Arrays.asList(objectconfig));
+        try {
+            parser.parseConditions(objectconfigs, (condition) -> {
+            });
+            assert false;
+        } catch (RuntimeException e) {
+            assert e.getMessage().equals(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
+        }
     }
 
 }
