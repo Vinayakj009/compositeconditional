@@ -1,4 +1,4 @@
-package utils.vinayak.patterns.CompositeConditional;
+package utils.vinayak.patterns.CompositeConditional.JsonConfigParser;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -7,6 +7,10 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import lombok.NoArgsConstructor;
+import utils.vinayak.patterns.CompositeConditional.BaseCondition;
+import utils.vinayak.patterns.CompositeConditional.Constants;
+import utils.vinayak.patterns.CompositeConditional.SatisfyAll;
+import utils.vinayak.patterns.CompositeConditional.SatisfyAny;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Operation;
 import utils.vinayak.patterns.CompositeConditional.JsonConfigParaser.JsonConfigParser;
