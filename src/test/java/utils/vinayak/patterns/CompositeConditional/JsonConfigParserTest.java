@@ -188,6 +188,19 @@ public class JsonConfigParserTest {
         } catch (RuntimeException e) {
             assert e.getMessage().equals(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
         }
+        Map<String, Object> objectconfig = new java.util.HashMap<>();
+        objectconfig.put("className", "eq");
+        objectconfig.put("data", java.util.Map.of("compare", "subject", "to", "science",
+                "operation", java.util.Map.of("className", "eq", "data", java.util.Map.of())));
+        Map<String, Object> objectconfigs = new java.util.HashMap<>();
+        objectconfigs.put("conditions", java.util.Arrays.asList(objectconfig));
+        try {
+            parser.parseConditions(objectconfigs, (condition) -> {
+            });
+            assert false;
+        } catch (RuntimeException e) {
+            assert e.getMessage().equals(Constants.EXCEPTION_CLASS_DOES_NOT_IMPLEMENT);
+        }
     }
 
 }
