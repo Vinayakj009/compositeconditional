@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import utils.vinayak.patterns.CompositeConditional.Interfaces.CompositeConfig;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Configurable;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.ConfigParser;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
@@ -15,7 +15,7 @@ import utils.vinayak.patterns.CompositeConditional.Interfaces.Operation;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseCondition<K, V> implements Condition<K, V>, CompositeConfig<K, V> {
+public class BaseCondition<K, V> implements Condition<K, V>, Configurable<K, V> {
     @Setter
     private K compare;
     @Setter

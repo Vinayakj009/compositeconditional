@@ -7,7 +7,7 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import utils.vinayak.patterns.CompositeConditional.Interfaces.CompositeConfig;
+import utils.vinayak.patterns.CompositeConditional.Interfaces.Configurable;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.ConfigParser;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
@@ -15,7 +15,7 @@ import utils.vinayak.patterns.CompositeConditional.Interfaces.Getter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SatisfySome<K, V> implements Condition<K, V>, CompositeConfig<K, V> {
+public class SatisfySome<K, V> implements Condition<K, V>, Configurable<K, V> {
     private List<Condition<K, V>> conditions;
     private int satisfyMinimum;
 

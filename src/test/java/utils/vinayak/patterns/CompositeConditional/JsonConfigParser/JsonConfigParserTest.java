@@ -1,5 +1,7 @@
 package utils.vinayak.patterns.CompositeConditional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -7,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import lombok.NoArgsConstructor;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Condition;
 import utils.vinayak.patterns.CompositeConditional.Interfaces.Operation;
+import utils.vinayak.patterns.CompositeConditional.JsonConfigParaser.JsonConfigParser;
 
 public class JsonConfigParserTest {
 
@@ -39,6 +42,15 @@ public class JsonConfigParserTest {
             }
             return "";
         });
+    }
+
+    @Test
+    public void parseBaseConditonThroughStringBadJson() {
+        String config = "{.\"className\": \"bc\",\"data\": {\"compare\": \"subject\",\"to\": \"science\",\"operation\": {\"className\": \"eq\", \"data\":{}}}}";
+        JsonConfigParser<String, String> parser = new JsonConfigParser<>();
+        parser.addClass("bc", BaseCondition.class);
+        parser.addClass("eq", equalOperation.class);
+        assertThrows(RuntimeException.class, () -> parser.parseCondition(config));
     }
 
     @Test
